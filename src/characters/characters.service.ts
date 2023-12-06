@@ -59,7 +59,7 @@ export class CharactersService {
         if(result.length !== 0) {
           return result
         } else {
-          throw new NotFoundException('No characters found');
+          throw new NotFoundException(`Cannot find character name: ${characterName}`);
         }
       }
       return await this.charactersRepository.find();
@@ -81,11 +81,17 @@ export class CharactersService {
    */
   async findCharacterByName(name?: string) {
     try {
-      return await this.charactersRepository.find({
+      const result = await this.charactersRepository.find({
         where: {
           full_name: name
         }
       })
+
+      if(result.length !== 0) {
+        return result
+      } else {
+        throw new NotFoundException(`Cannot find character name: '${name}'`);
+      }
       
     } catch (error) {
 
