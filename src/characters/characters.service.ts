@@ -45,21 +45,21 @@ export class CharactersService {
    * name contains the specified value. If not provided, the function will return all characters.
    * @returns a Promise that resolves to an array of character objects.
    */
-  async findAll(characterName?: string) {
+  async findAll(search: string) {
 
     try {
-
-      if(characterName) {
+      console.log(search)
+      if(search) {
         const result = await this.charactersRepository.find({
           where: {
-            full_name: ILike(`%${characterName}%`), // ใช้ ILike แทน Like เพื่อทำให้เป็น case-insensitive
+            full_name: ILike(`%${search}%`), // ใช้ ILike แทน Like เพื่อทำให้เป็น case-insensitive
           }
         })
   
         if(result.length !== 0) {
           return result
         } else {
-          throw new NotFoundException(`Cannot find character name: ${characterName}`);
+          throw new NotFoundException(`Cannot find character name: ${search}`);
         }
       }
       return await this.charactersRepository.find();
@@ -70,35 +70,6 @@ export class CharactersService {
       throw new NotFoundException(error);
     }
 
-  }
-
-  /**
-   * The function `findCharacterByName` is an asynchronous function that searches for a character by
-   * their full name in a characters repository and returns the result.
-   * @param {string} [name] - The `name` parameter is an optional string that represents the full name of
-   * the character you want to find.
-   * @returns the result of the `find` method called on the `charactersRepository`.
-   */
-  async findCharacterByName(name?: string) {
-    try {
-      const result = await this.charactersRepository.find({
-        where: {
-          full_name: name
-        }
-      })
-
-      if(result.length !== 0) {
-        return result
-      } else {
-        throw new NotFoundException(`Cannot find character name: '${name}'`);
-      }
-      
-    } catch (error) {
-
-      console.error(error)
-      throw new NotFoundException(error)
-    }
-    
   }
 
 }

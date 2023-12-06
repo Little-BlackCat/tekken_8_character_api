@@ -1,39 +1,42 @@
 import { Controller, Get, Param, Body, Query } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { Tekken_8_character_details } from './entity/characters.entity';
+import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Characters')
 @Controller('characters')
 export class CharactersController {
   constructor(private readonly charactersService: CharactersService) {}
 
-  @Get() // GET /characters?name=
-  /**
-   * The function `findCharacters` is an asynchronous function that takes in a query parameter `name` and
-   * a body parameter `characterName`, and returns a promise that resolves to an array of Tekken 8
-   * character details based on the provided parameters.
-   * @param {string} name - The `name` parameter is a query parameter that is passed in the URL. It is a
-   * string that represents the name of a character.
-   * @param body - The `body` parameter is an object that contains a property called `characterName`.
-   * This property is of type string and is used to specify the name of a character.
-   * @returns a Promise that resolves to an array of objects of type "Tekken_8_character_details".
-   */
-  async findCharacters(
-    @Query('name') name: string,
-    @Body() body: { characterName: string 
-  }): Promise<Tekken_8_character_details[]> {
+  // GET /characters?search={ }
+  @Get() 
+  @ApiOperation({
+    summary: 'Find characters based on name',
+    description: 'Retrieve Tekken 8 character details based on the provided parameters.',
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'The search parameter is used to search the name of a character.',
+    example: 'Jin Kazama',
+  })
+  async findAllCharacters(
+    @Query('search') search?: string,
+  ): Promise<Tekken_8_character_details[]> {
 
-    if(name) {
-      
-      return await this.charactersService.findCharacterByName(name);
-    } else {
-
-      const { characterName } = body;
-      return await this.charactersService.findAll(characterName); 
-    }
-
+    return await this.charactersService.findAll(search); 
   }
 
-  @Get(':id') // GET /characters/0
+  // GET /characters/{id}
+  @Get(':id') 
+  @ApiOperation({
+    summary: 'Find a character by ID',
+    description: 'Retrieve a Tekken 8 character detail based on the provided ID.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'The unique identifier of a Tekken 8 character.',
+  })
   /**
    * The function "findCharacter" is an asynchronous function that takes in an "id" parameter and returns
    * a promise that resolves to a "Tekken_8_character_details" object.
